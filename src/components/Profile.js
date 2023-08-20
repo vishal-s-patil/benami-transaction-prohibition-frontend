@@ -6,6 +6,7 @@ import { setUser } from "../utils/userSlice";
 import PropertyCard from "./PropertyCard";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [metamaskId, setMetamaskId] = useState();
@@ -274,20 +275,34 @@ const Profile = () => {
           </div>
         ) : (
           <div>
-            <div className="border black solid w-full p-5 pl-10 flex flex-col center items-start">
-              <h1 className="text-2xl font-semibold p-1 pb-3">
-                {currentUser?.name}
-              </h1>
-              <p className="p-1">{currentUser?.dob}</p>
-              <p className="p-1">{currentUser?.gender}</p>
-              <p className="p-1">{currentUser?.country}</p>
-              <p className="p-1">{currentUser?.po}</p>
-              <p className="p-1">{currentUser?.street}</p>
-              <p className="p-1">{currentUser?.subdist}</p>
-              <p className="p-1">{currentUser?.dist}</p>
-              <p className="p-1">{currentUser?.pc}</p>
-              <p className="p-1">{currentUser?.vtc}</p>
-              <p className="p-1">{currentUser?.state}</p>
+            <div className="flex">
+              <div className="border black solid w-3/4 p-5 pl-10 flex flex-col center items-start">
+                <h1 className="text-2xl font-semibold p-1 pb-3">
+                  {currentUser?.name}
+                </h1>
+                <p className="p-1">{currentUser?.dob}</p>
+                <p className="p-1">{currentUser?.gender}</p>
+                <p className="p-1">{currentUser?.country}</p>
+                <p className="p-1">{currentUser?.po}</p>
+                <p className="p-1">{currentUser?.street}</p>
+                <p className="p-1">{currentUser?.subdist}</p>
+                <p className="p-1">{currentUser?.dist}</p>
+                <p className="p-1">{currentUser?.pc}</p>
+                <p className="p-1">{currentUser?.vtc}</p>
+                <p className="p-1">{currentUser?.state}</p>
+              </div>
+              <div className="m-2 p-2">
+                <Link to="/add-property">
+                  <button
+                    type="submit"
+                    className="ml-2 p-2 px-3 border solid bg-slate-500 text-cyan-50"
+                    value="Search"
+                    // onClick={handleSearchLenders}
+                  >
+                    Add New Property
+                  </button>
+                </Link>
+              </div>
             </div>
 
             <div className="mt-8">

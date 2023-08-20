@@ -21,7 +21,7 @@ const PropertyDetails = () => {
   const [showBuyOptions, setBuyOptions] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [showPaymentButton, setPaymentButton] = useState(false);
-  const [showEligibility, setEligibility] = useState(false);
+  const [amount, setAmount] = useState(0);
 
   console.log(user);
 
@@ -93,7 +93,7 @@ const PropertyDetails = () => {
                       Proceed To Payment
                     </button>
                   )}
-                  <p
+                  {/* <p
                     className="text-lg font-semibold py-1 cursor-pointer"
                     onClick={() => setEligibility(!showEligibility)}
                   >
@@ -103,7 +103,7 @@ const PropertyDetails = () => {
                     <button className="ml-2 p-2 border solid bg-slate-500 text-cyan-50">
                       Check Eligibility
                     </button>
-                  )}
+                  )} */}
                   <p
                     onClick={() => {
                       setSearchUsers(!showSearchUsers);
@@ -129,13 +129,19 @@ const PropertyDetails = () => {
                         >
                           Search
                         </button>
+                        <input
+                          type="number"
+                          placeholder="Enter your loan amount..."
+                          className="border solid black pl-3 pr-3 pb-2 pt-2 ml-10"
+                          onChange={(e) => setAmount(e.target.value)}
+                        />
                       </div>
                       <div>
                         {searchText &&
                           userSearchResult?.map((user) => (
                             <div className="flex justify-between items-center px-2 bg-slate-100 my-2">
                               <p className="text-lg pr-4">{user.name}</p>
-                              <button className="ml-2 p-2 border solid bg-slate-500 text-cyan-50">
+                              <button className="p-2 border solid bg-slate-500 text-cyan-50">
                                 Request For Loan
                               </button>
                             </div>

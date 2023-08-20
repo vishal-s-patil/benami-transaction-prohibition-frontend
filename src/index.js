@@ -10,6 +10,7 @@ import Home from "./components/Home";
 import PropertyDetails from "./components/PropertyDetails";
 import store from "./utils/store";
 import { Provider } from "react-redux";
+import AddProperty from "./components/AddProperty";
 
 const appRouter = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const appRouter = createBrowserRouter([
       {
         path: "property/:id",
         element: <PropertyDetails />,
+      },
+      {
+        path: "add-property",
+        element: <AddProperty />,
       },
     ],
   },
