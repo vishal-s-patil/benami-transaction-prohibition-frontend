@@ -29,6 +29,7 @@ const Profile = () => {
   const [street, setStreet] = useState();
   const [subdist, setSubdist] = useState();
   const [vtc, setVtc] = useState();
+  const [pass, setPass] = useState();
 
   let userDetails = {
     name: "",
@@ -90,25 +91,35 @@ const Profile = () => {
       return;
     }
 
+    if (pass < 0 || pass > 9999) {
+      console.log("Invalid pass, it should be 4 digit only");
+      alert("Invalid Pass");
+      return;
+    }
+
     const formData = new FormData();
     console.log(selectedFile);
 
-    const x = await formData.append("file", selectedFile); // Use the 'file' key here
-    console.log(x);
+    formData.append("file", selectedFile); // Use the 'file' key here
 
-    console.log(formData);
+    const file = formData;
+    const account_address = metamaskId;
+
+    // console.log("Form Data ", file);
+    // console.log(account_address);
+    // console.log(pass);
 
     try {
-      const { data } = await axios.post(
-        `${baseURL}/profile/upload`,
-        formData,
-
-        metamaskId
-      );
-
-      console.log(data);
+      await axios.post(`${baseURL}/profile/upload`, file, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        pass,
+        account_address,
+      });
+      alert("File uploaded successfully");
     } catch (error) {
-      console.error("Error uploading file:", error);
+      alert("An error occurred while uploading the file");
     }
   };
 
@@ -259,9 +270,16 @@ const Profile = () => {
                 </label>
                 <input
                   type="file"
-                  // accept=".xml"
+                  accept=".zip"
                   onChange={handleFileChange}
                   className="mt-1 p-2 border rounded w-full"
+                />
+                <input
+                  type="number"
+                  placeholder="Pass for file"
+                  className="p-2 border rounded w-full mb-2"
+                  onChange={(e) => setPass(e.target.value)}
+                  required
                 />
                 <button
                   type="submit"
