@@ -97,28 +97,49 @@ const Profile = () => {
       return;
     }
 
-    const formData = new FormData();
-    console.log(selectedFile);
+    // const formData = new FormData();
+    console.log(selectedFile, typeof selectedFile);
 
-    formData.append("file", selectedFile); // Use the 'file' key here
+    // formData.append("file", selectedFile); // Use the 'file' key here
+    // formData.append('account_address', metamaskId);
+    // formData.append('pass', pass);
+    //const file = formData;
+    //const account_address = metamaskId;
 
-    const file = formData;
-    const account_address = metamaskId;
+    const form = new FormData();
+    form.append('account_address', metamaskId);
+    form.append('pass', pass);
+    form.append('file', selectedFile);
+
 
     // console.log("Form Data ", file);
     // console.log(account_address);
     // console.log(pass);
 
+    //`${baseURL}/profile/upload`
     try {
-      await axios.post(`${baseURL}/profile/upload`, file, {
+      const response = await axios.post('http://localhost:8000/profile/upload', form, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        pass,
-        account_address,
+          'Content-Type': 'multipart/form-data' 
+        }
       });
       alert("File uploaded successfully");
+      const {data} = response
+      console.log('response', response);
+      if (data?.msg === "failed") {
+        alert("signature validation failed, and the data has been modified");
+      } else {
+        //const userData = data.user_data;
+        //console.log('data', data.user_data);
+        if (data?.user_data === undefined) {
+          setAllowUpload(true);
+        } else {
+          setAllowUpload(false);
+          setUserData(data?.user_data);
+        }
+      }
     } catch (error) {
+      console.log(error);
       alert("An error occurred while uploading the file");
     }
   };
