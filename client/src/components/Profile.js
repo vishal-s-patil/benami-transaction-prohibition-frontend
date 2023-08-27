@@ -191,9 +191,8 @@ const Profile = () => {
       <div className="flex items-center space-x-4">
         {allowUpload ? (
           <div className="p-4">
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              {/* Other fields */}
-              {/* ... other user details */}
+            {/* <form onSubmit={handleSubmit} encType="multipart/form-data">
+              
               <input
                 type="text"
                 placeholder="Name"
@@ -280,8 +279,8 @@ const Profile = () => {
               >
                 Submit
               </button>
-            </form>
-            <p className="pl-3 pt-4 text-xl font-semibold"> OR </p>
+            </form> */}
+            <p className="pl-3 pt-4 text-xl font-semibold"></p>
 
             {/* File upload */}
             <div className="mb-4 mt-4">
@@ -296,7 +295,7 @@ const Profile = () => {
                   className="mt-1 p-2 border rounded w-full"
                 />
                 <input
-                  type="number"
+                  type="password"
                   placeholder="Pass for file"
                   className="p-2 border rounded w-full mb-2"
                   onChange={(e) => setPass(e.target.value)}
