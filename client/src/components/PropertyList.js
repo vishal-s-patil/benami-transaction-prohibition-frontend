@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setPropertyList } from "../utils/propertySlice";
 import { setUserList } from "../utils/userListSlice";
+import { setUser, setWalletMoney } from "../utils/userSlice";
+import { getContractBalance } from "../utils/Escrow_APIs";
 
 const PropertyList = () => {
   const dispatch = useDispatch();
@@ -16,13 +18,41 @@ const PropertyList = () => {
   const [searchText, setSearchText] = useState();
   const [propertyType, setPropertyType] = useState();
   const [price, setPrice] = useState();
+  const user = useSelector((store) => store.user.userData);
+
+  const getUser = async () => {
+    const res = await axios.get(
+      `${baseURL}/profile/get_user_data?account_address=${metamaskId}`
+    );
+
+    console.log(res.data);
+    if (res.data?.metamaskId !== undefined) {
+      dispatch(setUser(res.data));
+    }
+  };
+
+  // baseURL/escrow/get_balance_in_contract
+
+  const getContractBalance = async () => {
+    const res = await axios.get(`${baseURL}/escrow/get_balance_in_contract`);
+    console.log(res.data?.value);
+    dispatch(setWalletMoney(res.data?.value));
+  };
+
+  useEffect(() => {
+    //dispatch(setUser());
+    connectToMetamask();
+    getUser();
+    //getContractBalance();
+  }, [metamaskId]);
 
   const handleGetPropertyList = async () => {
-    const data = await axios.get(`${baseURL}/property`);
-    console.log(data?.data);
+    const data = await axios.get(`${baseURL}/property/get_properties`);
+    //console.log(data);
 
     const tempList = data?.data?.filter(
-      (property) => property?.isSale === true
+      (property) =>
+        property?.status === "onSale" || property?.status === "transaction"
     );
 
     setFilteredList(tempList);
@@ -30,10 +60,16 @@ const PropertyList = () => {
 
     if (data?.data) dispatch(setPropertyList(data?.data));
 
-    const users = await axios.get(`${baseURL}/profile/get_all_users`);
+    const users = await axios.get(`${baseURL}/profile/get_user_data`);
     //console.log(users.data);
 
     if (users?.data) dispatch(setUserList(users?.data));
+
+    const res = await axios.get(
+      `${baseURL}/profile/get_user_data?account_address=${metamaskId}`
+    );
+    //console.log(metamaskId);
+    //console.log(res.data);
   };
 
   const connectToMetamask = async () => {
@@ -46,6 +82,7 @@ const PropertyList = () => {
           method: "eth_requestAccounts",
         });
         setMetamaskId(accounts[0]);
+        console.log(metamaskId);
         console.log(accounts);
       } catch (error) {
         console.log("Error connecting...");
@@ -164,7 +201,7 @@ const PropertyList = () => {
       <div className="flex justify-between flex-wrap m-5 border solid 2px black">
         {filteredList &&
           filteredList.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyCard key={property._id} property={property} />
           ))}
       </div>
     </>
