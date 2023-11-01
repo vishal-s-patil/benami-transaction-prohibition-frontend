@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [metamaskId, setMetamaskId] = useState();
-  const [allowUpload, setAllowUpload] = useState(false);
+  const [allowUpload, setAllowUpload] = useState(true);
   const currentUser = useSelector((store) => store.user.userData);
   const dispatch = useDispatch();
   const propertyList = useSelector((store) => store.property.propertyList);
@@ -107,25 +107,28 @@ const Profile = () => {
     //const account_address = metamaskId;
 
     const form = new FormData();
-    form.append('account_address', metamaskId);
-    form.append('pass', pass);
-    form.append('file', selectedFile);
+    form.append("account_address", metamaskId);
+    form.append("pass", pass);
+    form.append("file", selectedFile);
 
-
-    // console.log("Form Data ", file);
+    //console.log("Form Data ", form);
     // console.log(account_address);
     // console.log(pass);
 
     //`${baseURL}/profile/upload`
     try {
-      const response = await axios.post('http://localhost:8000/profile/upload', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data' 
+      const response = await axios.post(
+        "http://localhost:8000/profile/upload",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
+      );
       alert("File uploaded successfully");
-      const {data} = response
-      console.log('response', response);
+      const { data } = response;
+      console.log("response", response);
       if (data?.msg === "failed") {
         alert("signature validation failed, and the data has been modified");
       } else {
@@ -151,17 +154,17 @@ const Profile = () => {
   };
 
   const getUserData = async () => {
-    const data = await axios.post(`${baseURL}/profile/get_user_data`, {
-      metamaskId,
-    });
+    const data = await axios.get(
+      `${baseURL}/profile/get_user_data?account_address=${metamaskId}`
+    );
 
-    console.log(data?.data?.user_details);
+    console.log(data?.data);
 
-    if (data?.data?.user_details === undefined) {
+    if (data?.data?.message !== undefined) {
       setAllowUpload(true);
     } else {
       setAllowUpload(false);
-      setUserData(data?.data?.user_details);
+      setUserData(data?.data);
     }
   };
 
@@ -347,9 +350,8 @@ const Profile = () => {
               <h2 className="text-lg font-semibold">Properties Owned</h2>
               <ul className="mt-4 space-y-2 pl-10 pb-2 flex flex-wrap justify-between">
                 {propertyList?.map((property) => {
-                  console.log(property.owner_id);
                   if (
-                    property?.owner_id?.toLowerCase() ==
+                    property?.owner?.toLowerCase() ==
                     currentUser?.metamaskId?.toLowerCase()
                   ) {
                     return <PropertyCard property={property} />;
