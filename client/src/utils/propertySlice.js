@@ -1,4 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { baseURL } from "./constants";
+import axios from "axios";
+
+const changeStatusOfProperty = async (index, propertyList, status) => {
+  const res = await axios.post(`${baseURL}/property/status_change`, {
+    id: propertyList[index]?._id,
+    status,
+  });
+  console.log(res.data);
+};
 
 const propertySlice = createSlice({
   name: "property",
@@ -11,10 +21,14 @@ const propertySlice = createSlice({
     },
     changeSaleOfProperty: (state, action) => {
       const index = state.propertyList.findIndex(
-        (property) => property.id === action.payload
+        (property) => property._id == action.payload.id
       );
       if (index !== -1) {
-        state.propertyList[index].isSale = !state.propertyList[index].isSale;
+        changeStatusOfProperty(
+          index,
+          state.propertyList,
+          action.payload.status
+        );
       }
     },
   },
