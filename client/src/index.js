@@ -11,12 +11,42 @@ import PropertyDetails from "./components/PropertyDetails";
 import store from "./utils/store";
 import { Provider } from "react-redux";
 import AddProperty from "./components/AddProperty";
+import NFT_Helper from "./utils/NFT_APIs";
+import Escrow_Helper from "./utils/Escrow_APIs";
+import Requests from "./components/Requests";
+import Dashboard from "./components/Dashboard";
+import PropertyOwnership from "./components/PropertyOwnership";
+import Check from "./components/Check";
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      {
+        path: "nft_helper",
+        element: <NFT_Helper />,
+      },
+      {
+        path: "escrow_helper",
+        element: <Escrow_Helper />,
+      },
+      {
+        path: "property/ownership/:id",
+        element: <PropertyOwnership />,
+      },
+      {
+        path: "check",
+        element: <Check />,
+      },
+      {
+        path: "requests",
+        element: <Requests />,
+      },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
       {
         path: "/",
         element: <Home />,
