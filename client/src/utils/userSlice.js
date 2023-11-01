@@ -3,14 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    userData: {},
+    userData: undefined,
+    walletMoney: 0,
   },
   reducers: {
     setUser: (state, action) => {
-      state.userData = action.payload;
+      if (action.payload.message != "user not found")
+        state.userData = action.payload;
+    },
+    setWalletMoney: (state, action) => {
+      state.walletMoney = action.payload;
     },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, setWalletMoney } = userSlice.actions;
 export default userSlice.reducer;
