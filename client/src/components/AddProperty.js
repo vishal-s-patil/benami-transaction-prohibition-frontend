@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { baseURL } from "../utils/constants";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 // id: 29,
 //     price: 3800000,
 //     emi: 21700,
@@ -11,41 +14,83 @@ import { useSelector } from "react-redux";
 //     owner_id: "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
 //     isSale: true,
 const AddProperty = () => {
+  const [name, setName] = useState();
+  const [description, setDescription] = useState();
+  const [bedroom, setBedroom] = useState();
+  const [bathroom, setBathroom] = useState();
   const [price, setPrice] = useState();
-  const [emi, setEmi] = useState();
+  const [emi, setEmi] = useState(0);
   const [sqft, setSqft] = useState();
   const [type, setType] = useState();
   const [image, setImage] = useState();
   const [address, setAddress] = useState();
+  const navigate = useNavigate();
 
   const propertyList = useSelector((store) => store.property.propertyList);
   const user = useSelector((store) => store.user.userData);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("image", image);
+    if (bathroom <= 0 || bedroom <= 0) {
+      alert("Bathrooms and Bed rooms must have a value more than 0");
+      return;
+    }
 
-    let n = propertyList.length;
-    const id = propertyList[n - 1].id + 1;
+    const account_address = user.metamaskId;
 
-    const owner_id = user.metamaskId;
-    const isSale = false;
-
-    const newProperty = {
-      id,
-      price,
-      emi,
-      sqft,
-      type,
-      formData,
-      address,
-      owner_id,
-      isSale,
+    const data = {
+      name: name,
+      address: address,
+      description: description,
+      image: "",
+      id: "",
+      attributes: [
+        {
+          trait_type: "price",
+          value: price,
+        },
+        {
+          trait_type: "type",
+          value: type,
+        },
+        {
+          trait_type: "Bed Rooms",
+          value: bedroom,
+        },
+        {
+          trait_type: "Bathrooms",
+          value: bathroom,
+        },
+        {
+          trait_type: "sqft",
+          value: sqft,
+        },
+        {
+          trait_type: "emi",
+          value: emi,
+        },
+      ],
     };
 
-    console.log(newProperty);
+    const form = new FormData();
+    form.append("image", image);
+    form.append("data", data);
+    form.append("account_address", account_address);
+
+    console.log(form);
+
+    const res = await axios.post(`${baseURL}/property/add_property`, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        // "Content-Type": "application/json",
+      },
+    });
+    console.log(res?.data);
+
+    if (res?.data?.msg === "property added/minted successfully") {
+      navigate("/");
+    }
   };
 
   const handleFileChange = (e) => {
@@ -61,36 +106,43 @@ const AddProperty = () => {
       setImage(e.target.files[0]);
     } else {
       alert("Wrong type of image selected");
+      return;
     }
 
-    console.log(i);
+    console.log(image);
   };
 
   return (
     <div className="flex items-center space-x-4">
       <div className="p-10">
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Name"
+            className="p-2 border rounded w-full mb-2"
+            required
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type="textarea"
+            placeholder="Address"
+            className="p-2 pb-12 border rounded w-full mb-2"
+            onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            className="p-2 border rounded w-full mb-2"
+            required
+            onChange={(e) => setDescription(e.target.value)}
+          />
           <input
             type="number"
             placeholder="Price in ₹"
             className="p-2 border rounded w-full mb-2"
             required
             onChange={(e) => setPrice(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="EMI in ₹"
-            className="p-2 border rounded w-full mb-2"
-            required
-            onChange={(e) => setEmi(e.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Area in sqft"
-            className="p-2 border rounded w-full mb-2"
-            required
-            onChange={(e) => setSqft(e.target.value)}
           />
           <input
             type="text"
@@ -100,11 +152,25 @@ const AddProperty = () => {
             required
           />
           <input
-            type="textarea"
-            placeholder="Address"
-            className="p-2 pb-12 border rounded w-full mb-2"
-            onChange={(e) => setAddress(e.target.value)}
+            type="number"
+            placeholder="No. of Bedrooms"
+            className="p-2 border rounded w-full mb-2"
+            onChange={(e) => setBedroom(e.target.value)}
             required
+          />
+          <input
+            type="number"
+            placeholder="No. of Bathrooms"
+            className="p-2 border rounded w-full mb-2"
+            onChange={(e) => setBathroom(e.target.value)}
+            required
+          />
+          <input
+            type="number"
+            placeholder="Area in sqft"
+            className="p-2 border rounded w-full mb-2"
+            required
+            onChange={(e) => setSqft(e.target.value)}
           />
 
           <label className="block text-sm font-medium text-gray-700 ">
