@@ -15,6 +15,21 @@ const Navbar = () => {
             </Link>
           </li>
           <li className="m-10 -mt-2">
+            <Link to="/requests">
+              <h2>Requests</h2>
+            </Link>
+          </li>
+          <li className="m-10 -mt-2">
+            <Link to="/check">
+              <h2>Check NFT</h2>
+            </Link>
+          </li>
+          <li className="m-10 -mt-2">
+            <Link to="/dashboard">
+              <h2>Dashboard</h2>
+            </Link>
+          </li>
+          <li className="m-10 -mt-2">
             <Link to="/profile">
               <h1>Profile</h1>
             </Link>
