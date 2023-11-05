@@ -74,7 +74,7 @@ const AddProperty = () => {
     };
 
     const form = new FormData();
-    form.append("image", image);
+    form.append("file", image);
     form.append("data", data);
     form.append("account_address", account_address);
 
@@ -114,7 +114,7 @@ const AddProperty = () => {
   return (
     <div className="flex items-center space-x-4">
       <div className="p-10">
-        <form enctype="multipart/form-data" onSubmit={handleSubmit}>
+        <form encType="multipart/form-data" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Name"

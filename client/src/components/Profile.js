@@ -287,7 +287,7 @@ const Profile = () => {
 
             {/* File upload */}
             <div className="mb-4 mt-4">
-              <form enctype="multipart/form-data" onSubmit={handleFileSubmit}>
+              <form encType="multipart/form-data" onSubmit={handleFileSubmit}>
                 <label className="block text-sm font-medium text-gray-700 ">
                   Upload XML File
                 </label>
