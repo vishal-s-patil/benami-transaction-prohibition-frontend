@@ -5,7 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setPropertyList } from "../utils/propertySlice";
 import { setUserList } from "../utils/userListSlice";
-import { setUser, setWalletMoney } from "../utils/userSlice";
+import {
+  getParticularLendersList,
+  getParticularUserRequest,
+  setLendersList,
+  setUser,
+  setUserRequests,
+  setWalletMoney,
+} from "../utils/userSlice";
 import { getContractBalance } from "../utils/Escrow_APIs";
 
 const PropertyList = () => {
@@ -31,6 +38,24 @@ const PropertyList = () => {
     }
   };
 
+  const getLendersList = async () => {
+    const res = await axios.get(`${baseURL}/profile/get_lenders`);
+    console.log(res?.data);
+    if (res?.data) {
+      dispatch(setLendersList(res?.data));
+      //dispatch(getParticularLendersList(user?.metamaskId));
+    }
+  };
+
+  const getUserRequests = async () => {
+    const res = await axios.get(`${baseURL}/profile/get_user_requests`);
+    console.log(res?.data);
+    if (res?.data) {
+      dispatch(setUserRequests(res?.data));
+      //dispatch(getParticularUserRequest(user?.metamaskId));
+    }
+  };
+
   // baseURL/escrow/get_balance_in_contract
 
   const getContractBalance = async () => {
@@ -43,6 +68,8 @@ const PropertyList = () => {
     //dispatch(setUser());
     connectToMetamask();
     getUser();
+    getUserRequests();
+    getLendersList();
     //getContractBalance();
   }, [metamaskId]);
 
