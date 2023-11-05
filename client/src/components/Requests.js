@@ -118,32 +118,34 @@ const Requests = () => {
   const user = useSelector((store) => store.user.userData);
   const [requests, setRequests] = useState();
   const getRequests = async () => {
+    console.log(user.metamaskId);
     const res = await axios.get(
       `${baseURL}/profile/get_user_requests?userId=${user?.metamaskId}`
     );
-    //console.log(res.data);
+    console.log(res.data);
     setRequests(res.data);
   };
 
   useEffect(() => {
     getRequests();
-  }, []);
+  }, [user]);
 
   return (
     <div>
       <p className="font-semibold text-xl m-2 my-5">
         Requests You Received For Loan
       </p>
-      {requests?.map((request) => (
-        <SingleRequest
-          user={user}
-          buyer={request.requestFrom}
-          nftId={request.nftId}
-          amount={request.amount}
-          requests={requests}
-          setRequests={setRequests}
-        />
-      ))}
+      {requests &&
+        requests?.map((request) => (
+          <SingleRequest
+            user={user}
+            buyer={request.requestFrom}
+            nftId={request.nftId}
+            amount={request.amount}
+            requests={requests}
+            setRequests={setRequests}
+          />
+        ))}
     </div>
   );
 };
