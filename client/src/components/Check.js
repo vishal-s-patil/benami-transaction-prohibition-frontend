@@ -22,6 +22,24 @@ const PrintHelper = (props) => {
   );
 };
 
+const ArrayPrinter = (props) => {
+  const { arr } = props;
+
+  if (typeof arr[0] !== "number") return;
+
+  return (
+    <>
+      {arr && (
+        <ol className="bg-slate-50 m-4 text-lg font-semibold text-gray-700">
+          {arr?.map((id) => {
+            return <li>Token ID : {id}</li>;
+          })}
+        </ol>
+      )}
+    </>
+  );
+};
+
 const Check = () => {
   //   return (
   //     <>
@@ -161,9 +179,13 @@ const Check = () => {
                     <p className="text-lg ">
                       <b>Owners : </b>
                     </p>
-                    <ul>
-                      <li>{res2}</li>
-                    </ul>
+                    {res2?.length ? (
+                      <ArrayPrinter arr={res2} />
+                    ) : (
+                      <ul>
+                        <li>None</li>
+                      </ul>
+                    )}
                   </div>
                 )}
               </div>
@@ -193,9 +215,13 @@ const Check = () => {
                     <p className="text-lg">
                       <b>NFT's owned : </b>
                     </p>
-                    <ul>
-                      <li>{res3}</li>
-                    </ul>
+                    {res3?.length ? (
+                      <ArrayPrinter arr={res3} />
+                    ) : (
+                      <ul>
+                        <li>None</li>
+                      </ul>
+                    )}
                   </div>
                 )}
               </div>
