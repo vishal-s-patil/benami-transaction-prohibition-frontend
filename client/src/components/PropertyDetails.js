@@ -151,6 +151,22 @@ const PropertyDetails = () => {
       "0x90D79bf6EB2c4f870365E785982E1f101E93b906"
     );
 
+    const res = await axios.post(`${baseURL}/profile/add_lenders`, {
+      buyer: user?.metamaskId,
+      lender: lenderAddress,
+      amount: remainingAmount,
+    });
+    console.log(res.data);
+
+    const r = await axios.post(`${baseURL}/profile/add_user_requests`, {
+      requestFrom: user?.metamaskId,
+      requestTo: lenderAddress,
+      nftId: property?.nft_id,
+      amount: remainingAmount,
+    });
+
+    console.log(r.data);
+
     // Changing sale status of property to onSale, notOnSale or transaction in backend and redux store
     dispatch(
       changeSaleOfProperty({ id: property?._id, status: "transaction" })
@@ -347,7 +363,7 @@ const PropertyDetails = () => {
                           Search
                         </button>
                         <label className="ml-2 p-2 border solid bg-slate-700 text-cyan-50 font-semibold">
-                          Loan Amount : ₹{property?.price - property?.emi}
+                          Loan Amount : ₹{property?.price - amount}
                         </label>
                       </div>
                       <div>
