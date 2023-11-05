@@ -82,8 +82,7 @@ const AddProperty = () => {
 
     const res = await axios.post(`${baseURL}/property/add_property`, form, {
       headers: {
-        "Content-Type": "multipart/form-data",
-        // "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data"
       },
     });
     console.log(res?.data);
@@ -115,7 +114,7 @@ const AddProperty = () => {
   return (
     <div className="flex items-center space-x-4">
       <div className="p-10">
-        <form onSubmit={handleSubmit}>
+        <form enctype="multipart/form-data" onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Name"
