@@ -8,8 +8,27 @@ const PropertyOwnership = () => {
 
   const getOwners = async () => {
     const data = await getAllOwners(nft_id);
+
     setAllOwners(data.msg);
     console.log(allOwners);
+  };
+
+  const ArrayPrinter = (props) => {
+    const { arr } = props;
+
+    if (typeof arr[0] !== "number") return;
+
+    return (
+      <>
+        {arr && (
+          <ol className="bg-slate-50 m-4 text-lg font-semibold text-gray-700">
+            {arr?.map((id) => {
+              return <li>Token ID : {id}</li>;
+            })}
+          </ol>
+        )}
+      </>
+    );
   };
 
   useEffect(() => {
