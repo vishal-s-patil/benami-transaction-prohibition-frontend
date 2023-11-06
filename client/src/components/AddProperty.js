@@ -74,47 +74,38 @@ const AddProperty = () => {
     };
 
     const form = new FormData();
-    form.append("file", image);
+
     form.append("data", data);
     form.append("account_address", account_address);
+    form.append("file", image);
 
-    console.log(form);
+    console.log(image, typeof image);
 
     const res = await axios.post(`${baseURL}/property/add_property`, form, {
       headers: {
-        "Content-Type": "multipart/form-data"
+        "Content-Type": "multipart/form-data",
+        // "Content-Type": "application/json",
       },
     });
+
     console.log(res?.data);
 
     if (res?.data?.msg === "property added/minted successfully") {
-      navigate("/");
+      //navigate("/");
     }
   };
 
   const handleFileChange = (e) => {
     e.preventDefault();
 
-    const i = e.target.files[0];
-
-    if (
-      i.type === "image/jpeg" ||
-      i.type === "image/jpg" ||
-      i.type === "image/png"
-    ) {
-      setImage(e.target.files[0]);
-    } else {
-      alert("Wrong type of image selected");
-      return;
-    }
-
+    setImage(e.target.files[0]);
     console.log(image);
   };
 
   return (
     <div className="flex items-center space-x-4">
       <div className="p-10">
-        <form encType="multipart/form-data" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <input
             type="text"
             placeholder="Name"
@@ -179,12 +170,12 @@ const AddProperty = () => {
             type="file"
             onChange={handleFileChange}
             className="mt-1 p-2 border rounded w-full"
+            accept=".png, .jpg, .jpeg"
             required
           />
           <button
             type="submit"
             className="bg-slate-500 hover:bg-slate-600 text-cyan-50 font-bold py-2 my-4 px-4 rounded"
-            onSubmit={handleSubmit}
           >
             Submit
           </button>
