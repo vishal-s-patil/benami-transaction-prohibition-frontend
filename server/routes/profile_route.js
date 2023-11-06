@@ -3,7 +3,7 @@ const router = express.Router();
 const profile = require("../controllers/profile_controller.js");
 
 //router.route("/get_user_data?account_address").post(profile.get_user_data);
-// router.route("/upload").post(profile.upload_xml);
+//router.route("/upload").post(profile.upload_xml);
 
 router.route("/get_user_data").get(profile.get_user_data);
 router.route("/get_user_requests").get(profile.get_user_requests);
