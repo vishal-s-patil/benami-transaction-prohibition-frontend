@@ -9,14 +9,17 @@ const PropertyOwnership = () => {
   const getOwners = async () => {
     const data = await getAllOwners(nft_id);
 
-    setAllOwners(data.msg);
+    if (data?.msg === undefined) {
+      setAllOwners(data);
+    }
+
     console.log(allOwners);
   };
 
   const ArrayPrinter = (props) => {
     const { arr } = props;
 
-    if (typeof arr[0] !== "number") return;
+    //if (typeof arr[0] !== "number") return;
 
     return (
       <>
@@ -38,7 +41,7 @@ const PropertyOwnership = () => {
   return (
     <div>
       <p className="font-semibold text-xl m-2 my-5">History of Ownership</p>
-      {allOwners}
+      <ArrayPrinter arr={allOwners} />
     </div>
   );
 };
