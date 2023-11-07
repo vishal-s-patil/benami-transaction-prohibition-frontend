@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { changeSaleOfProperty, setPropertyList } from "../utils/propertySlice";
 import axios from "axios";
+import Web3 from 'web3';
 import { baseURL } from "../utils/constants";
 import {
   depositEarnest,
@@ -15,6 +16,11 @@ import {
   setLender,
 } from "../utils/Escrow_APIs";
 import { approveNFT } from "../utils/NFT_APIs";
+
+const web3 = new Web3();
+const weiToEther = (weiAmount) => {
+  return web3.utils.fromWei(weiAmount, 'ether');
+}
 
 const PropertyDetails = () => {
   const id = useParams().id;
@@ -56,8 +62,9 @@ const PropertyDetails = () => {
           method: "eth_requestAccounts",
         });
 
-        console.log(accounts);
         let n = accounts.length;
+        console.log('all accounts', accounts);
+        console.log('inspector account', accounts[n - 1]);
         setInspector(accounts[n - 1]);
       } catch (error) {
         console.log("Error connecting...");
@@ -81,8 +88,8 @@ const PropertyDetails = () => {
     console.log("userlist", userList);
     const filteredUsers = userList?.filter(
       (u) =>
-        u?.metamaskId?.toLowerCase().includes(searchText?.toLowerCase()) &&
-        u?.metamaskId != user?.metamaskId
+        u?.account_address?.toLowerCase().includes(searchText?.toLowerCase()) &&
+        u?.account_address != user?.metamaskId
     );
     console.log("filteredUsers", filteredUsers);
     setUserSearchResult(filteredUsers);
@@ -117,7 +124,7 @@ const PropertyDetails = () => {
 
     connectToMetamask();
 
-    console.log(inspector);
+    console.log('inspector', inspector);
 
     await init(property?.owner, inspector);
 
@@ -209,7 +216,7 @@ const PropertyDetails = () => {
 
     console.log("add lender resposne", res.data);
 
-    const r = await axios.post(`${baseURL}/profile/add_user_requests`, {
+    const r = await axios.post(`${baseURL}/profile/add_user_request`, {
       requestFrom: user?.metamaskId,
       requestTo: lenderAddress,
       nftId: property?.nft_id,
@@ -235,9 +242,9 @@ const PropertyDetails = () => {
 
   const handleFinalizeSale = async () => {
     const res = await axios.get(`${baseURL}/escrow/get_balance_in_contract`);
-    const value = res.data?.value;
-    console.log(value);
-    if (value === property?.price) {
+    const value = weiToEther(res.data?.value);
+    // console.log(value);
+    if (value >= property?.price) {
       await finalizeSale(
         property?.nft_id,
         property?.owner,
@@ -257,7 +264,7 @@ const PropertyDetails = () => {
 
       navigate("/");
     } else {
-      alert("Property payment isn't complete");
+      alert(`Property payment isn't complete, payment sent is: ${value} / ${property?.price}`, );
       return;
     }
   };
@@ -431,15 +438,15 @@ const PropertyDetails = () => {
                           userSearchResult?.map((u) => (
                             <div className="flex justify-between items-center px-2 bg-slate-100 my-2">
                               <p className="text-lg py-4 pr-8 ">
-                                {u?.metamaskId}
+                                {u?.account_address}
                               </p>
                               <button
                                 className="p-2 border solid bg-slate-500 text-cyan-50 font-semibold"
                                 //className="p-3 ml-2 mt-1 border solid bg-slate-500 text-cyan-50 font-semibold text-lg"
                                 onClick={async () => {
-                                  console.log(u.metamaskId);
+                                  console.log(u.account_address);
 
-                                  handleDepositAndLoan(u.metamaskId);
+                                  handleDepositAndLoan(u.account_address);
                                 }}
                               >
                                 Pay ₹{amount} and Request For Loan

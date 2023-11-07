@@ -24,12 +24,14 @@ const PrintHelper = (props) => {
 
 const Dashboard = () => {
   const getHistory = async (metamaskId) => {
-    const res = await axios.get(
-      `${baseURL}/nft/get_ownership_history?account_address=${metamaskId}`
-    );
-    setHistoryArray(res.data?.arr);
-    console.log(res.data?.arr);
-    console.log(historyArray);
+    const res = await getOwnershipHistory(user?.metamaskId);
+
+    if (res?.msg === undefined) {
+      setHistoryArray(res);
+    }
+    console.log('res', res);
+    console.log('res.arr', res?.arr);
+    console.log('historyArray', historyArray);
   };
   const user = useSelector((store) => store.user.userData);
   //console.log(user?.metamaskId);
