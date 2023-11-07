@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +44,33 @@ const PropertyDetails = () => {
 
   //console.log(user?.metamaskId + " " + property?.owner);
 
+  const [inspector, setInspector] = useState();
+
+  const connectToMetamask = async () => {
+    console.log("Requesting account...");
+    // X Check if Meta Mask Extension exists
+    if (window.ethereum) {
+      console.log("detected");
+      try {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+
+        console.log(accounts);
+        let n = accounts.length;
+        setInspector(accounts[n - 1]);
+      } catch (error) {
+        console.log("Error connecting...");
+      }
+    } else {
+      alert("Meta Mask not detected");
+    }
+  };
+
+  useEffect(() => {
+    connectToMetamask();
+  }, []);
+
   const getProperties = async () => {
     const { data } = await axios.get(`${baseURL}/property/get_properties`);
     //console.log(data);
@@ -51,13 +78,13 @@ const PropertyDetails = () => {
   };
 
   const handleSearchLenders = () => {
-    console.log('userlist', userList);
+    console.log("userlist", userList);
     const filteredUsers = userList?.filter(
       (u) =>
-        u?.account_address?.toLowerCase().includes(searchText?.toLowerCase()) &&
-        u?.account_address != user?.metamaskId
+        u?.metamaskId?.toLowerCase().includes(searchText?.toLowerCase()) &&
+        u?.metamaskId != user?.metamaskId
     );
-    console.log('filteredUsers', filteredUsers);
+    console.log("filteredUsers", filteredUsers);
     setUserSearchResult(filteredUsers);
     //console.log(filteredUsers);
   };
@@ -69,12 +96,12 @@ const PropertyDetails = () => {
       alert("Property Price and Deposit Amount should be more than 0");
       return;
     }
-    
+
     // let x = depositAmount;
     // setPropertyPrice(propertyPrice);
     // setDepositAmount(x);
 
-    console.log('deposit amount in add to sale', depositAmount, propertyPrice);
+    console.log("deposit amount in add to sale", depositAmount, propertyPrice);
     // if (depositAmount >= propertyPrice) {
     //   alert("Deposit Amount should be less than Property Price");
     //   return;
@@ -87,7 +114,12 @@ const PropertyDetails = () => {
     await approveNFT(property?.nft_id, property?.owner);
 
     //  initialising using seller account and inspector account which is a dummy account
-    await init(property?.owner, "0x2D8d8F27a2E53A3eb66D237Ce49eedCEd11B2138");
+
+    connectToMetamask();
+
+    console.log(inspector);
+
+    await init(property?.owner, inspector);
 
     // listing the property for sale
     await listProperty(
@@ -106,10 +138,11 @@ const PropertyDetails = () => {
 
   const handleFullPayment = async () => {
     if (!user || !user.metamaskId) {
-      console.log('user in handle full payment', user);
-      console.log('buyer', user?.metamaskId);
+      console.log("user in handle full payment", user);
+      console.log("buyer", user?.metamaskId);
       return;
     }
+
     await setBuyer(property?.nft_id, user?.metamaskId, property?.owner);
 
     await setLender(user?.metamaskId, property?.owner);
@@ -122,7 +155,7 @@ const PropertyDetails = () => {
       0,
       property?.owner,
       property?.owner,
-      "0x2D8d8F27a2E53A3eb66D237Ce49eedCEd11B2138"
+      inspector
     );
 
     // Seller address itself and 0 amount since buyer has fully paid the amount
@@ -130,18 +163,21 @@ const PropertyDetails = () => {
 
     // Changing sale status of property to onSale, notOnSale or transaction in backend and redux store
     dispatch(
-      changeSaleOfProperty({ id: property?.nft_id, status: "transaction" })
+      changeSaleOfProperty({
+        id: property?.nft_id,
+        status: `transaction ${user?.metamaskId}`,
+      })
     );
 
     // Fetching all properties again
     await getProperties();
 
     // Changing current selected property status since searching for it again in propertyList will take time
-    setProperty({ ...property, status: "transaction" });
+    setProperty({ ...property, status: `transaction ${user?.metamaskId}` });
   };
 
   const handleDepositAndLoan = async (lenderAddress) => {
-    console.log('lender address in handleDepositAndLoan', lenderAddress);
+    console.log("lender address in handleDepositAndLoan", lenderAddress);
     if (lenderAddress === undefined) return;
 
     if (amount < property?.emi) {
@@ -152,8 +188,7 @@ const PropertyDetails = () => {
     await setBuyer(property?.nft_id, user?.metamaskId, property?.owner);
     //console.log(lenderAddress);
     await setLender(user?.metamaskId, lenderAddress);
-    console.log('amount in handle fullpament', amount);
-
+    console.log("amount in handle fullpament", amount);
 
     const remainingAmount = property?.price - amount;
     await depositEarnest(
@@ -163,10 +198,8 @@ const PropertyDetails = () => {
       remainingAmount,
       property?.owner,
       lenderAddress,
-      "0x2D8d8F27a2E53A3eb66D237Ce49eedCEd11B2138"
+      inspector
     );
-
-    await sendAmount(lenderAddress, remainingAmount);
 
     const res = await axios.post(`${baseURL}/profile/add_lenders`, {
       buyer: user?.metamaskId,
@@ -174,35 +207,42 @@ const PropertyDetails = () => {
       amount: remainingAmount,
     });
 
-    console.log('add lender resposne', res.data);
+    console.log("add lender resposne", res.data);
 
-    const r = await axios.post(`${baseURL}/profile/add_user_request`, {
+    const r = await axios.post(`${baseURL}/profile/add_user_requests`, {
       requestFrom: user?.metamaskId,
       requestTo: lenderAddress,
       nftId: property?.nft_id,
       amount: remainingAmount,
     });
 
-    console.log('add user req resposen', r.data);
+    console.log("add user req resposen", r.data);
 
     // Changing sale status of property to onSale, notOnSale or transaction in backend and redux store
     dispatch(
-      changeSaleOfProperty({ id: property?.nft_id, status: "transaction" })
+      changeSaleOfProperty({
+        id: property?.nft_id,
+        status: `transaction ${user?.metamaskId}`,
+      })
     );
 
     // Fetching all properties again
     await getProperties();
 
     // Changing current selected property status since searching for it again in propertyList will take time
-    setProperty({ ...property, status: "transaction" });
+    setProperty({ ...property, status: `transaction ${user?.metamaskId}` });
   };
 
   const handleFinalizeSale = async () => {
     const res = await axios.get(`${baseURL}/escrow/get_balance_in_contract`);
     const value = res.data?.value;
     console.log(value);
-    if (value >= property?.price) {
-      await finalizeSale(property?.nft_id, property?.owner, user?.metamaskId);
+    if (value === property?.price) {
+      await finalizeSale(
+        property?.nft_id,
+        property?.owner,
+        property?.status.substr(12)
+      );
 
       // Changing sale status of property to onSale, notOnSale or transaction in backend and redux store
       dispatch(
@@ -269,7 +309,10 @@ const PropertyDetails = () => {
                   Remove From Sale
                 </button>
               </>
-            ) : property?.status === "transaction" ? (
+            ) : property?.status.substr(0, 11) === "transaction" &&
+              (user?.metamaskId === property?.owner ||
+                property?.status.substr(12).toLowerCase() ===
+                  user?.metamaskId.toLowerCase()) ? (
               <button
                 className="mt-5 p-2 mr-10 border solid text-lg bg-slate-500 text-cyan-50 cursor-pointer"
                 onClick={handleFinalizeSale}
@@ -296,19 +339,18 @@ const PropertyDetails = () => {
                 </div>
                 <button
                   className="mt-3 p-2 mr-10 ml-2 border solid text-lg bg-slate-500 text-cyan-50 cursor-pointer"
-                  onClick={() => { }}
+                  onClick={() => {}}
                 >
                   Add To Sale
                 </button>
               </form>
             )
-          ) : property?.status === "transaction" &&
-            user?.metamaskId !== property?.owner ? (
+          ) : property?.status.substr(0, 11) === `transaction` ? (
             <button
               className="mt-5 p-2 mr-10 border solid text-lg bg-slate-500 text-cyan-50 cursor-pointer"
               onClick={handleFinalizeSale}
             >
-              Finalize Sale
+              Property Under Transaction
             </button>
           ) : (
             <>
@@ -388,14 +430,16 @@ const PropertyDetails = () => {
                         {searchText &&
                           userSearchResult?.map((u) => (
                             <div className="flex justify-between items-center px-2 bg-slate-100 my-2">
-                              <p className="text-lg py-4 pr-8 ">{u?.account_address}</p>
+                              <p className="text-lg py-4 pr-8 ">
+                                {u?.metamaskId}
+                              </p>
                               <button
                                 className="p-2 border solid bg-slate-500 text-cyan-50 font-semibold"
                                 //className="p-3 ml-2 mt-1 border solid bg-slate-500 text-cyan-50 font-semibold text-lg"
                                 onClick={async () => {
                                   console.log(u.metamaskId);
 
-                                  handleDepositAndLoan(u.account_address);
+                                  handleDepositAndLoan(u.metamaskId);
                                 }}
                               >
                                 Pay ₹{amount} and Request For Loan
