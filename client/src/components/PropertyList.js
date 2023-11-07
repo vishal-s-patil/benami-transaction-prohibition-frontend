@@ -82,8 +82,7 @@ const PropertyList = () => {
     //console.log(data);
 
     const tempList = data?.data?.filter(
-      (property) =>
-        property?.status === "onSale" || property?.status === "transaction"
+      (property) => property?.status !== "notOnSale"
     );
 
     setFilteredList(tempList);
