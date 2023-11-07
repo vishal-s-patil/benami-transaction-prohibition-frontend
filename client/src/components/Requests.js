@@ -43,7 +43,7 @@ const SingleRequest = ({
       lender: user?.metamaskId,
     });
 
-    console.log(res.data);
+    console.log('rm usr req resp', res.data);
     setRequests(res.data);
   };
   const handleAcceptRequest = async () => {
@@ -56,7 +56,7 @@ const SingleRequest = ({
         lender: user?.metamaskId,
       });
 
-      console.log(req.data);
+      console.log('rm user req resp', req.data);
       setRequests(req.data);
     }
   };
@@ -118,12 +118,20 @@ const Requests = () => {
   const user = useSelector((store) => store.user.userData);
   const [requests, setRequests] = useState();
   const getRequests = async () => {
-    console.log(user.metamaskId);
+    if(!user || !user.metamaskId) {
+      return;
+    }
+    console.log('user in get user requests', user.metamaskId);
     const res = await axios.get(
       `${baseURL}/profile/get_user_requests?userId=${user?.metamaskId}`
     );
     console.log(res.data);
-    setRequests(res.data);
+    if (res.data?.msg === "no user found with requested user id") {
+      console.log(res.data?.msg);
+    } else {
+      setRequests(res.data);
+    }
+    // setRequests(res.data);
   };
 
   useEffect(() => {

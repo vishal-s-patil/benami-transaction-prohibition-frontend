@@ -14,18 +14,20 @@ import {
   setWalletMoney,
 } from "../utils/userSlice";
 import { getContractBalance } from "../utils/Escrow_APIs";
+import { useNavigate } from "react-router-dom";
 
 const PropertyList = () => {
   const dispatch = useDispatch();
 
   const [metamaskId, setMetamaskId] = useState();
 
-  const [propertyList, setPL] = useState();
+  const [propertyList, setPL] = useState([]);
   const [filteredList, setFilteredList] = useState();
   const [searchText, setSearchText] = useState();
   const [propertyType, setPropertyType] = useState();
   const [price, setPrice] = useState();
   const user = useSelector((store) => store.user.userData);
+  const navigate = useNavigate();
 
   const getUser = async () => {
     const res = await axios.get(
@@ -33,7 +35,9 @@ const PropertyList = () => {
     );
 
     console.log(res.data);
-    if (res.data?.metamaskId !== undefined) {
+    if (res.data?.msg === "No records found") {
+      // navigate("/profile");
+    } else {
       dispatch(setUser(res.data));
     }
   };

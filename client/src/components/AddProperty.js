@@ -75,11 +75,15 @@ const AddProperty = () => {
 
     const form = new FormData();
 
-    form.append("data", data);
+    form.append("data", JSON.stringify(data));
     form.append("account_address", account_address);
     form.append("file", image);
 
     console.log(image, typeof image);
+    console.log('acc', account_address);
+    console.log('user metamsk address', user?.metamaskId);
+    console.log('user', user);
+    console.log('data', data);
 
     const res = await axios.post(`${baseURL}/property/add_property`, form, {
       headers: {
@@ -91,7 +95,7 @@ const AddProperty = () => {
     console.log(res?.data);
 
     if (res?.data?.msg === "property added/minted successfully") {
-      //navigate("/");
+      navigate("/");
     }
   };
 

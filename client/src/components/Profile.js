@@ -16,6 +16,8 @@ const Profile = () => {
   const propertyList = useSelector((store) => store.property.propertyList);
   const [selectedFile, setSelectedFile] = useState();
 
+  console.log('propertyList', propertyList);
+
   const [selectedDate, setSelectedDate] = useState();
 
   const [name, setName] = useState();
@@ -153,14 +155,18 @@ const Profile = () => {
     setSelectedFile(event.target.files[0]);
   };
 
+  console.log('get user data metammask id', metamaskId);
   const getUserData = async () => {
+    if (metamaskId == undefined) {
+      return;
+    }
     const data = await axios.get(
       `${baseURL}/profile/get_user_data?account_address=${metamaskId}`
     );
 
-    console.log(data?.data);
+    console.log('user data from property list', data?.data);
 
-    if (data?.data?.message !== undefined) {
+    if (data?.data?.msg === "No records found") {
       setAllowUpload(true);
     } else {
       setAllowUpload(false);
@@ -338,7 +344,7 @@ const Profile = () => {
                     type="submit"
                     className="ml-2 p-2 px-3 border solid bg-slate-500 text-cyan-50"
                     value="Search"
-                    // onClick={handleSearchLenders}
+                  // onClick={handleSearchLenders}
                   >
                     Add New Property
                   </button>
@@ -349,7 +355,7 @@ const Profile = () => {
             <div className="mt-8">
               <h2 className="text-lg font-semibold">Properties Owned</h2>
               <ul className="mt-4 space-y-2 pl-10 pb-2 flex flex-wrap justify-between">
-                {propertyList?.map((property) => {
+                {propertyList && propertyList.length != 0 && propertyList?.map((property) => {
                   if (
                     property?.owner?.toLowerCase() ==
                     currentUser?.metamaskId?.toLowerCase()

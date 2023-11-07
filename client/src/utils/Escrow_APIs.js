@@ -96,10 +96,11 @@ export const sendAmount = async (from, amt) => {
 
 // baseURL/escrow/finalize_sale
 
-export const finalizeSale = async (nftID, from) => {
+export const finalizeSale = async (nftID, from, buyer) => {
   const res = await axios.post(`${baseURL}/escrow/finalize_sale`, {
     nftID,
     from,
+    buyer,
   });
 
   console.log(res.data);
