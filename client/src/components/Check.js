@@ -25,7 +25,7 @@ const PrintHelper = (props) => {
 const ArrayPrinter = (props) => {
   const { arr } = props;
 
-  if (typeof arr[0] !== "number") return;
+  //if (typeof arr[0] !== "number") return;
 
   return (
     <>
@@ -81,7 +81,9 @@ const Check = () => {
 
     const res = await getAllOwners(searchText);
     console.log(res);
-    setRes2(res?.msg);
+    if (res?.msg === undefined) {
+      setRes2(res);
+    }
     setSearchText();
   };
 
@@ -90,7 +92,10 @@ const Check = () => {
 
     const res = await getOwnedNFTs(searchText);
     console.log(res.data);
-    setRes3(res.data?.msg);
+    if (res.data?.msg === undefined) {
+      setRes3(res.data);
+    }
+
     setSearchText();
   };
 
@@ -99,7 +104,10 @@ const Check = () => {
 
     const res = await getOwnershipHistory(searchText);
     console.log(res);
-    setRes4(res?.arr);
+    if(res?.msg === undefined){
+      setRes4(res?.arr);
+    }
+    
     setSearchText();
   };
 
