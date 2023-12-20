@@ -92,7 +92,7 @@ const SingleRequest = ({
           )}
         </p>
         <p className="text-lg py-2 pr-8 ">
-          <b>Amount Requested for Loan : </b>₹{amount}
+          <b>Amount Requested for Loan : </b>{amount} ETH
         </p>
         <div>
           <button

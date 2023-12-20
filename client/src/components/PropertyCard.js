@@ -11,8 +11,8 @@ const PropertyCard = (props) => {
       <Link to={"/property/" + property._id}>
         <img className="w-full h-1/2" src={property?.image} alt="Property" />
         <div className="mt-4">
-          <p className="text-lg font-semibold">Price: ₹{property.price}</p>
-          <p>Deposit Amount: ₹{property.emi}</p>
+          <p className="text-lg font-semibold">Price: {property.price} ETH</p>
+          <p>Deposit Amount: {property.emi} ETH</p>
           <p>Sqft: {property.sqft} sqft</p>
           <p>Type: {property.type}</p>
           <p>Address: {property.addr}</p>

@@ -277,8 +277,9 @@ const PropertyDetails = () => {
         className="w-[700px]  h-[600px] pr-4"
       />
       <div className="mt-10">
-        <p className="text-2xl font-semibold">Price: ₹{property?.price}</p>
-        <p className="text-xl py-2">Deposit Amount: ₹{property?.emi}</p>
+      <p className="text-xl py-2">NFT ID : {property?.nft_id}</p>
+        <p className="text-2xl font-semibold">Price: {property?.price} ETH</p>
+        <p className="text-xl py-2">Deposit Amount: {property?.emi} ETH</p>
         <p className="text-xl py-2">Sqft: {property?.sqft} sqft</p>
         <p className="text-xl py-2">Type: {property?.type}</p>
         <p className="text-xl py-2">Address: {property?.addr}</p>
@@ -357,7 +358,7 @@ const PropertyDetails = () => {
               className="mt-5 p-2 mr-10 border solid text-lg bg-slate-500 text-cyan-50 cursor-pointer"
               onClick={handleFinalizeSale}
             >
-              Property Under Transaction
+              Finalize sale
             </button>
           ) : (
             <>
@@ -382,7 +383,7 @@ const PropertyDetails = () => {
                       className="ml-2 p-3 border solid bg-slate-500 text-cyan-50 font-semibold text-lg"
                       onClick={handleFullPayment}
                     >
-                      Pay ₹{property?.price}
+                      Pay {property?.price} ETH
                     </button>
                   )}
                   {/* <p
@@ -430,7 +431,7 @@ const PropertyDetails = () => {
                           Search
                         </button>
                         <label className="ml-2 p-2 border solid bg-slate-700 text-cyan-50 font-semibold">
-                          Loan Amount : ₹{property?.price - amount}
+                          Loan Amount : {property?.price - amount} ETH
                         </label>
                       </div>
                       <div>
@@ -449,7 +450,7 @@ const PropertyDetails = () => {
                                   handleDepositAndLoan(u.account_address);
                                 }}
                               >
-                                Pay ₹{amount} and Request For Loan
+                                Pay {amount} ETH and Request For Loan
                               </button>
                             </div>
                           ))}

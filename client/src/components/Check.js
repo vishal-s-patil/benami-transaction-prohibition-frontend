@@ -105,7 +105,7 @@ const Check = () => {
     const res = await getOwnershipHistory(searchText);
     console.log(res);
     if(res?.msg === undefined){
-      setRes4(res?.arr);
+      setRes4(res);
     }
     
     setSearchText();

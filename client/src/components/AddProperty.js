@@ -133,7 +133,7 @@ const AddProperty = () => {
           />
           <input
             type="number"
-            placeholder="Price in ₹"
+            placeholder="Price in ETH"
             className="p-2 border rounded w-full mb-2"
             required
             onChange={(e) => setPrice(e.target.value)}
